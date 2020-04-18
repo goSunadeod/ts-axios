@@ -19,7 +19,6 @@
     "node": ">=6.0.0"
   },
   "scripts": {
-    "dev": "node examples/server.js",
     "lint": "tslint  --project tsconfig.json -t codeFrame 'src/**/*.ts' 'test/**/*.ts'",
     "prebuild": "rimraf dist",
     "build": "tsc --module commonjs && rollup -c rollup.config.ts && typedoc --out docs --target es6 --theme minimal --mode file src",
@@ -123,6 +122,6 @@
     "ts-loader": "^5.3.3",
     "tslint-loader": "^3.5.4",
     "express": "^4.17.1",
-    "body-parser": "^1.18.3"
+    
   }
 }
