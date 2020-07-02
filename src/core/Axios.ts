@@ -1,11 +1,18 @@
-import { AxiosRequestConfig, AxiosPromise, Method, AxiosResponse, RejectedFn, ResolvedFn} from '../types'
-import dispatchRequest from './dispatchRequest'
+import {
+  AxiosRequestConfig,
+  AxiosPromise,
+  Method,
+  AxiosResponse,
+  RejectedFn,
+  ResolvedFn
+} from '../types'
+import dispatchRequest, { transformURL } from './dispatchRequest'
 import InterceptorManager from './InterceptorManager'
 import mergeConfig from '../core/mergeConfig'
 
 interface Interceptors {
   request: InterceptorManager<AxiosRequestConfig>
-  response:InterceptorManager<AxiosResponse>
+  response: InterceptorManager<AxiosResponse>
 }
 
 interface PromiseChain<T> {
@@ -18,15 +25,15 @@ export default class Axios {
   interceptors: Interceptors
 
   constructor(initConfig: AxiosRequestConfig) {
-    this.defaults = initConfig;
+    this.defaults = initConfig
     this.interceptors = {
       request: new InterceptorManager<AxiosRequestConfig>(),
-      response: new InterceptorManager<AxiosResponse>(),
+      response: new InterceptorManager<AxiosResponse>()
     }
   }
   request(url: any, config?: any): AxiosPromise {
-    if(typeof url === 'string') {
-      if(!config) {
+    if (typeof url === 'string') {
+      if (!config) {
         config = {}
       }
       config.url = url
@@ -37,10 +44,12 @@ export default class Axios {
     config = mergeConfig(this.defaults, config)
 
     // 链式调用 拦截器传递
-    const chain: PromiseChain<any>[] = [{
-      resolved: dispatchRequest,
-      rejected: undefined
-    }]
+    const chain: PromiseChain<any>[] = [
+      {
+        resolved: dispatchRequest,
+        rejected: undefined
+      }
+    ]
 
     this.interceptors.request.forEach(interceptor => {
       chain.unshift(interceptor)
@@ -51,8 +60,8 @@ export default class Axios {
     })
 
     let promise = Promise.resolve(config)
-    while(chain.length) {
-      const {resolved, rejected} = chain.shift()!
+    while (chain.length) {
+      const { resolved, rejected } = chain.shift()!
       promise = promise.then(resolved, rejected)
     }
 
@@ -85,6 +94,11 @@ export default class Axios {
 
   patch(url: string, data?: any, config?: AxiosRequestConfig): AxiosPromise {
     return this._requestMethodWithData('patch', url, data, config)
+  }
+
+  getUri(config?: AxiosRequestConfig): string {
+    config = mergeConfig(this.defaults, config)
+    return transformURL(config)
   }
 
   _requestMethodWithoutData(
