@@ -42,6 +42,7 @@ export default class Axios {
     }
 
     config = mergeConfig(this.defaults, config)
+    config.method = config.method.toLowerCase()
 
     // 链式调用 拦截器传递
     const chain: PromiseChain<any>[] = [

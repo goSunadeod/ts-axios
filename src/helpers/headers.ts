@@ -27,12 +27,12 @@ export function parseHeaders(headers: string): any {
   }
 
   headers.split('\r\n').forEach(line => {
-    let [key, val] = line.split(':')
+    let [key, ...vals] = line.split(':')
     key = key.trim().toLowerCase()
     if (!key) {
       return // 跳到下一次循环 这里是forEach
     }
-    val && val.trim()
+    const val = vals.join(':').trim()
     parsed[key] = val
   })
   return parsed
